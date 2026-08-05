@@ -15,6 +15,7 @@ export default async function Home({
   const { data: toutesLesTables } = await supabase
     .from("tables_resto")
     .select("id, zone, capacite")
+    .eq("actif", true)
     .order("id", { ascending: true });
 
   const tableDetectee =

@@ -17,6 +17,7 @@ export default async function AdminPage() {
   const { data: commandes } = await supabase
     .from("commandes")
     .select("*, commande_lignes(*)")
+    .neq("statut", "terminee")
     .gt("expire_le", new Date().toISOString())
     .order("cree_le", { ascending: true });
 
@@ -25,6 +26,12 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between border-b border-foreground/10 p-4">
         <h1 className="text-xl font-semibold">Commandes</h1>
         <div className="flex items-center gap-4">
+          <Link
+            href="/admin/tables"
+            className="text-sm font-medium text-foreground/50 underline underline-offset-2"
+          >
+            Tables
+          </Link>
           <Link
             href="/admin/qrcodes"
             className="text-sm font-medium text-foreground/50 underline underline-offset-2"

@@ -45,11 +45,11 @@ const LABEL_MODE: Record<Mode, string> = {
 };
 
 const LABEL_PAIEMENT: Record<NonNullable<ModePaiement>, string> = {
-  especes: "Espèces",
-  carte_bleue: "Carte bleue",
-  cheque: "Chèque",
-  ticket_restaurant: "Ticket restaurant",
-  carte_restaurant: "Carte restaurant",
+  especes: "💵 Espèces",
+  carte_bleue: "💳 Carte bleue",
+  cheque: "📝 Chèque",
+  ticket_restaurant: "🎫 Ticket restaurant",
+  carte_restaurant: "🪪 Carte restaurant",
 };
 
 const LABEL_STATUT: Record<Statut, string> = {
@@ -210,11 +210,11 @@ function CarteCommande({
           className="rounded-full border border-foreground/15 bg-transparent px-2 py-1 text-xs"
         >
           <option className="text-black" value="">Non réglé</option>
-          <option className="text-black" value="especes">Espèces</option>
-          <option className="text-black" value="carte_bleue">Carte bleue</option>
-          <option className="text-black" value="cheque">Chèque</option>
-          <option className="text-black" value="ticket_restaurant">Ticket restaurant</option>
-          <option className="text-black" value="carte_restaurant">Carte restaurant</option>
+          <option className="text-black" value="especes">💵 Espèces</option>
+          <option className="text-black" value="carte_bleue">💳 Carte bleue</option>
+          <option className="text-black" value="cheque">📝 Chèque</option>
+          <option className="text-black" value="ticket_restaurant">🎫 Ticket restaurant</option>
+          <option className="text-black" value="carte_restaurant">🪪 Carte restaurant</option>
         </select>
       </div>
 
@@ -334,11 +334,17 @@ export default function Dashboard({
         { event: "UPDATE", schema: "public", table: "commandes" },
         (payload) => {
           const maj = payload.new as Commande;
-          setCommandes((precedentes) =>
-            precedentes.map((c) =>
-              c.id === maj.id ? { ...c, ...maj } : c
-            )
-          );
+          if (maj.statut === "terminee") {
+            setCommandes((precedentes) =>
+              precedentes.filter((c) => c.id !== maj.id)
+            );
+          } else {
+            setCommandes((precedentes) =>
+              precedentes.map((c) =>
+                c.id === maj.id ? { ...c, ...maj } : c
+              )
+            );
+          }
         }
       )
       .on(
@@ -362,11 +368,19 @@ export default function Dashboard({
     const prochain = PROCHAIN_STATUT[commande.statut];
     if (!prochain) return;
 
-    setCommandes((precedentes) =>
-      precedentes.map((c) =>
-        c.id === commande.id ? { ...c, statut: prochain.suivant } : c
-      )
-    );
+    if (prochain.suivant === "terminee") {
+      // Une commande terminée sort du tableau actif : elle reste
+      // consultable dans l'Historique, mais n'a plus rien à faire ici.
+      setCommandes((precedentes) =>
+        precedentes.filter((c) => c.id !== commande.id)
+      );
+    } else {
+      setCommandes((precedentes) =>
+        precedentes.map((c) =>
+          c.id === commande.id ? { ...c, statut: prochain.suivant } : c
+        )
+      );
+    }
 
     await supabaseRef.current
       .from("commandes")

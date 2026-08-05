@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase-server";
 import { formatPrix } from "@/lib/types";
+import ListeImprimable, { type CommandeAvecLignes } from "./liste-imprimable";
 
 type LigneHistorique = {
   id: string;
@@ -9,23 +10,35 @@ type LigneHistorique = {
   table_id: string;
   mode: "sur_place" | "emporter" | "mixte";
   statut: "nouvelle" | "acceptee" | "en_preparation" | "prete" | "terminee";
+  mode_paiement:
+    | "especes"
+    | "carte_bleue"
+    | "cheque"
+    | "ticket_restaurant"
+    | "carte_restaurant"
+    | null;
+  commentaire_general: string | null;
+  temps_retrait_minutes: number | null;
   total_centimes: number;
   cree_le: string;
 };
 
-const LABEL_MODE: Record<string, string> = {
-  sur_place: "Sur place",
-  emporter: "À emporter",
-  mixte: "Mixte",
+const LABEL_PAIEMENT: Record<string, string> = {
+  especes: "💵 Espèces",
+  carte_bleue: "💳 Carte bleue",
+  cheque: "📝 Chèque",
+  ticket_restaurant: "🎫 Ticket restaurant",
+  carte_restaurant: "🪪 Carte restaurant",
 };
 
-const LABEL_STATUT: Record<string, string> = {
-  nouvelle: "Nouvelle",
-  acceptee: "Acceptée",
-  en_preparation: "En préparation",
-  prete: "Prête",
-  terminee: "Terminée",
-};
+const ORDRE_PAIEMENT = [
+  "especes",
+  "carte_bleue",
+  "cheque",
+  "ticket_restaurant",
+  "carte_restaurant",
+  "non_regle",
+];
 
 export default async function HistoriquePage({
   searchParams,
@@ -47,9 +60,31 @@ export default async function HistoriquePage({
   const { data } = await supabase.rpc("commandes_du_jour", {
     p_date: dateChoisie,
   });
-  const commandes = (data ?? []) as LigneHistorique[];
+  const commandesBase = (data ?? []) as LigneHistorique[];
+
+  const ids = commandesBase.map((c) => c.id);
+  const { data: lignesData } =
+    ids.length > 0
+      ? await supabase.from("commande_lignes").select("*").in("commande_id", ids)
+      : { data: [] };
+
+  const commandes: CommandeAvecLignes[] = commandesBase.map((c) => ({
+    ...c,
+    commande_lignes: (lignesData ?? []).filter(
+      (l) => l.commande_id === c.id
+    ),
+  }));
 
   const total = commandes.reduce((s, c) => s + c.total_centimes, 0);
+
+  const parPaiement = new Map<string, number>();
+  for (const c of commandes) {
+    const cle = c.mode_paiement ?? "non_regle";
+    parPaiement.set(cle, (parPaiement.get(cle) ?? 0) + c.total_centimes);
+  }
+  const repartition = ORDRE_PAIEMENT.filter((cle) => parPaiement.has(cle)).map(
+    (cle) => ({ cle, total: parPaiement.get(cle)! })
+  );
 
   return (
     <div className="flex flex-1 flex-col">
@@ -88,38 +123,22 @@ export default async function HistoriquePage({
         <p className="text-xs text-foreground/50">
           {commandes.length} commande{commandes.length > 1 ? "s" : ""}
         </p>
+
+        {repartition.length > 0 && (
+          <div className="mt-3 flex flex-col gap-1 border-t border-foreground/10 pt-3">
+            {repartition.map(({ cle, total: sousTotal }) => (
+              <div key={cle} className="flex justify-between text-sm">
+                <span className="text-foreground/60">
+                  {cle === "non_regle" ? "Non réglé" : LABEL_PAIEMENT[cle]}
+                </span>
+                <span className="font-mono">{formatPrix(sousTotal)}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-col gap-2 px-4 pb-6">
-        {commandes.length === 0 && (
-          <p className="py-12 text-center text-sm text-foreground/50">
-            Aucune commande ce jour-là.
-          </p>
-        )}
-        {commandes.map((c) => (
-          <div
-            key={c.id}
-            className="flex items-center justify-between rounded-xl border border-foreground/10 p-3 text-sm"
-          >
-            <div>
-              <p className="font-medium">
-                {c.table_id} · #{c.numero_court}
-              </p>
-              <p className="text-xs text-foreground/50">
-                {new Date(c.cree_le).toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  timeZone: "Europe/Paris",
-                })}{" "}
-                · {LABEL_MODE[c.mode]} · {LABEL_STATUT[c.statut]}
-              </p>
-            </div>
-            <p className="font-mono font-semibold">
-              {formatPrix(c.total_centimes)}
-            </p>
-          </div>
-        ))}
-      </div>
+      <ListeImprimable commandes={commandes} />
     </div>
   );
 }
