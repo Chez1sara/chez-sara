@@ -19,3 +19,40 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Ticket de commande (Étape 11) : n'apparaît qu'à l'impression, en
+   remplaçant tout le reste de la page par une mise en page étroite
+   adaptée au papier thermique (80mm). */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .ticket-impression,
+  .ticket-impression *,
+  .grille-imprimable,
+  .grille-imprimable * {
+    visibility: visible;
+  }
+  .ticket-impression {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80mm;
+    padding: 4mm;
+    color: #000;
+    font-family: monospace;
+    font-size: 11px;
+  }
+  .grille-imprimable {
+    display: grid !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8mm;
+    padding: 10mm;
+    color: #000;
+  }
+}
