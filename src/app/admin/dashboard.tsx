@@ -111,11 +111,7 @@ function TicketImprimable({ commande }: { commande: Commande }) {
   return (
     <div className="ticket-impression hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/icone-192.png"
-        alt=""
-        style={{ width: "20mm", height: "20mm", margin: "0 auto 2mm" }}
-      />
+      
       <p className="text-center font-bold">Chez Sara</p>
       <p className="text-center">C.C Carrefour, 32 rue de Pierre, 79000 Niort</p>
       <p className="text-center">06 83 61 38 46</p>
