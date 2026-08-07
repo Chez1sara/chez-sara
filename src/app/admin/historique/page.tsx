@@ -88,7 +88,7 @@ export default async function HistoriquePage({
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-between border-b border-foreground/10 p-4">
+      <div className="flex items-center justify-between border-b border-accent/20 p-4">
         <h1 className="text-xl font-semibold">Historique</h1>
         <Link
           href="/admin"
@@ -104,11 +104,11 @@ export default async function HistoriquePage({
           name="date"
           defaultValue={dateChoisie}
           max={aujourdHui}
-          className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+          className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
         />
         <button
           type="submit"
-          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-background"
+          className="rounded-full bg-jaune px-4 py-2 text-sm font-medium text-ink"
         >
           Voir
         </button>
@@ -125,7 +125,7 @@ export default async function HistoriquePage({
         </p>
 
         {repartition.length > 0 && (
-          <div className="mt-3 flex flex-col gap-1 border-t border-foreground/10 pt-3">
+          <div className="mt-3 flex flex-col gap-1 border-t border-accent/15 pt-3">
             {repartition.map(({ cle, total: sousTotal }) => (
               <div key={cle} className="flex justify-between text-sm">
                 <span className="text-foreground/60">

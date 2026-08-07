@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { creerClientNavigateur } from "@/lib/supabase-browser";
 import { formatPrix } from "@/lib/types";
+import { LOGO_TICKET_BASE64 } from "@/lib/logo-base64";
 
 type ModeLigne = "sur_place" | "emporter" | null;
 type Mode = "sur_place" | "emporter" | "mixte";
@@ -109,7 +110,15 @@ function MinuteurDepuis({ date }: { date: string }) {
 function TicketImprimable({ commande }: { commande: Commande }) {
   return (
     <div className="ticket-impression hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/icone-192.png"
+        alt=""
+        style={{ width: "20mm", height: "20mm", margin: "0 auto 2mm" }}
+      />
       <p className="text-center font-bold">Chez Sara</p>
+      <p className="text-center">C.C Carrefour, 32 rue de Pierre, 79000 Niort</p>
+      <p className="text-center">06 83 61 38 46</p>
       <p className="text-center">Table {commande.table_id}</p>
       <p className="text-center">
         #{commande.numero_court} · {LABEL_MODE[commande.mode]}
@@ -170,7 +179,11 @@ function CarteCommande({
   const estNouvelle = commande.statut === "nouvelle";
 
   return (
-    <div className="rounded-xl border border-foreground/10 p-3">
+    <div
+      className={`rounded-xl border p-3 transition-colors ${
+        ouverte ? "border-accent/50 bg-accent/10" : "border-accent/20 bg-panel"
+      }`}
+    >
       <button
         onClick={onToggle}
         className="flex w-full items-start justify-between gap-3 text-left"
@@ -207,7 +220,7 @@ function CarteCommande({
           onChange={(e) =>
             onChangerPaiement((e.target.value || null) as ModePaiement)
           }
-          className="rounded-full border border-foreground/15 bg-transparent px-2 py-1 text-xs"
+          className="rounded-full border border-accent/25 bg-transparent px-2 py-1 text-xs"
         >
           <option className="text-black" value="">Non réglé</option>
           <option className="text-black" value="especes">💵 Espèces</option>
@@ -219,7 +232,7 @@ function CarteCommande({
       </div>
 
       {ouverte && (
-        <div className="mt-3 flex flex-col gap-2 border-t border-foreground/10 pt-3">
+        <div className="mt-3 flex flex-col gap-2 border-t border-accent/15 pt-3">
           {commande.commande_lignes.map((ligne) => (
             <div key={ligne.id} className="flex justify-between text-sm">
               <span>
@@ -259,20 +272,20 @@ function CarteCommande({
         {prochain && (
           <button
             onClick={onChangerStatut}
-            className="flex-1 rounded-full bg-accent py-2 text-sm font-medium text-background"
+            className="flex-1 rounded-full bg-jaune py-2 text-sm font-medium text-ink"
           >
             {prochain.label}
           </button>
         )}
         <button
           onClick={onImprimer}
-          className="rounded-full border border-foreground/15 px-3 py-2 text-sm text-foreground/60"
+          className="rounded-full border border-accent/30 px-3 py-2 text-sm text-foreground/70"
         >
           Imprimer
         </button>
         <button
           onClick={onSupprimer}
-          className="rounded-full border border-foreground/15 px-3 py-2 text-sm text-foreground/60"
+          className="rounded-full border border-red-500/40 px-3 py-2 text-sm text-red-500"
         >
           Supprimer
         </button>

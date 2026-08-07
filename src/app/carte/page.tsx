@@ -41,9 +41,10 @@ export default async function CartePage() {
     "@type": "Restaurant",
     name: "Chez Sara",
     servesCuisine: "Marocaine",
+    telephone: "+33683613846",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "32 Rue de Pierre",
+      streetAddress: "C.C Carrefour, 32 rue de Pierre",
       addressLocality: "Niort",
       postalCode: "79000",
       addressCountry: "FR",
@@ -76,11 +77,41 @@ export default async function CartePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(donneesStructurees) }}
       />
 
-      <div className="text-center">
+      <div className="relative -mx-4 -mt-8 overflow-hidden px-4 pb-8 pt-8 text-center">
+        <Image
+          src="/motif-geometrique.png"
+          alt=""
+          width={500}
+          height={455}
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 opacity-[0.08]"
+        />
+        <Image
+          src="/coin-arabesque.png"
+          alt=""
+          width={100}
+          height={92}
+          className="pointer-events-none absolute -left-2 -top-2 -z-10 opacity-80"
+        />
+        <Image
+          src="/coin-arabesque.png"
+          alt=""
+          width={100}
+          height={92}
+          className="pointer-events-none absolute -right-2 -top-2 -z-10 -scale-x-100 opacity-80"
+        />
+
+        <Image
+          src="/logo-carte.png"
+          alt="Chez Sara"
+          width={160}
+          height={160}
+          className="relative mx-auto mb-3 rounded-full border-2 border-accent/40"
+          priority
+        />
         <p className="font-mono text-xs tracking-widest uppercase text-accent">
           Niort · France
         </p>
-        <h1 className="text-3xl font-semibold">Chez Sara</h1>
+        <h1 className="font-display text-3xl font-semibold">Chez Sara</h1>
         <p className="mt-1 text-sm text-foreground/60">
           Cuisine marocaine — couscous, tajines, tacos maison &amp; pizzas
         </p>
@@ -89,13 +120,13 @@ export default async function CartePage() {
       <div className="flex flex-wrap justify-center gap-2">
         <Link
           href="/api/menu/export-pdf"
-          className="rounded-full border border-foreground/15 px-4 py-2 text-sm font-medium"
+          className="rounded-full bg-jaune px-4 py-2 text-sm font-medium text-ink"
         >
           Exporter en PDF
         </Link>
         <Link
           href="/api/menu/export-csv"
-          className="rounded-full border border-foreground/15 px-4 py-2 text-sm font-medium"
+          className="rounded-full bg-jaune px-4 py-2 text-sm font-medium text-ink"
         >
           Exporter en CSV
         </Link>
@@ -112,7 +143,7 @@ export default async function CartePage() {
               {platsCat.map((plat) => (
                 <div
                   key={plat.id}
-                  className="flex gap-3 rounded-xl border border-foreground/10 p-3"
+                  className="flex gap-3 rounded-xl border border-accent/20 bg-panel p-3"
                 >
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
                     {plat.image_url ? (
@@ -153,6 +184,24 @@ export default async function CartePage() {
           </section>
         );
       })}
+
+      <footer className="motif-zellige -mx-4 -mb-8 mt-4 flex flex-col items-center gap-2 border-t border-accent/20 px-4 pb-10 pt-8 text-center text-sm text-foreground/70">
+        <Image
+          src="/icone-192.png"
+          alt=""
+          width={56}
+          height={56}
+          className="mb-1 rounded-full"
+        />
+        <p className="font-display text-lg text-foreground">Chez Sara</p>
+        <p>C.C Carrefour, 32 rue de Pierre, 79000 Niort</p>
+        <Link
+          href="tel:+33683613846"
+          className="mt-1 rounded-full bg-jaune px-5 py-2 text-sm font-semibold text-ink"
+        >
+          📞 06 83 61 38 46
+        </Link>
+      </footer>
     </div>
   );
 }

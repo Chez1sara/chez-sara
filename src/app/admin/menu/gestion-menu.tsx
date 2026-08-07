@@ -24,6 +24,8 @@ type Plat = {
   allergenes: string[];
   ordre: number;
   actif: boolean;
+  nb_viandes_a_choisir: number;
+  nb_sauces_max: number;
 };
 
 type Formulaire = {
@@ -33,6 +35,8 @@ type Formulaire = {
   description: string;
   prixTexte: string;
   allergenesTexte: string;
+  nbViandesTexte: string;
+  nbSaucesTexte: string;
 };
 
 const FORMULAIRE_VIDE: Formulaire = {
@@ -42,6 +46,8 @@ const FORMULAIRE_VIDE: Formulaire = {
   description: "",
   prixTexte: "",
   allergenesTexte: "",
+  nbViandesTexte: "0",
+  nbSaucesTexte: "0",
 };
 
 function nomFichierPhoto(): string {
@@ -63,6 +69,8 @@ export default function GestionMenu({
   const [erreur, setErreur] = useState<string | null>(null);
   const supabase = creerClientNavigateur();
 
+  // ---- Disponibilité (mise à jour optimiste) --------------------------
+
   async function basculerDisponibilite(plat: Plat) {
     setPlats((prec) =>
       prec.map((p) =>
@@ -76,6 +84,7 @@ export default function GestionMenu({
       .eq("id", plat.id);
 
     if (error) {
+      // Échec : on annule le changement local.
       setPlats((prec) =>
         prec.map((p) =>
           p.id === plat.id ? { ...p, disponible: plat.disponible } : p
@@ -83,6 +92,8 @@ export default function GestionMenu({
       );
     }
   }
+
+  // ---- Réordonnancement des plats --------------------------------------
 
   async function deplacerPlat(plat: Plat, direction: -1 | 1) {
     const memeCategorie = plats
@@ -103,6 +114,8 @@ export default function GestionMenu({
     await supabase.from("plats").update({ ordre: voisin.ordre }).eq("id", plat.id);
     await supabase.from("plats").update({ ordre: plat.ordre }).eq("id", voisin.id);
   }
+
+  // ---- Catégories -------------------------------------------------------
 
   async function ajouterCategorie() {
     const ordreMax = Math.max(0, ...categories.map((c) => c.ordre));
@@ -135,6 +148,8 @@ export default function GestionMenu({
       .eq("id", categorie.id);
   }
 
+  // ---- Formulaire de création / modification d'un plat ------------------
+
   function ouvrirCreation() {
     setErreur(null);
     setFichierPhoto(null);
@@ -151,6 +166,8 @@ export default function GestionMenu({
       description: plat.description ?? "",
       prixTexte: (plat.prix_centimes / 100).toFixed(2),
       allergenesTexte: plat.allergenes.join(", "),
+      nbViandesTexte: String(plat.nb_viandes_a_choisir ?? 0),
+      nbSaucesTexte: String(plat.nb_sauces_max ?? 0),
     });
   }
 
@@ -196,6 +213,8 @@ export default function GestionMenu({
         description: formulaire.description.trim() || null,
         prix_centimes: prixCentimes,
         allergenes,
+        nb_viandes_a_choisir: parseInt(formulaire.nbViandesTexte, 10) || 0,
+        nb_sauces_max: parseInt(formulaire.nbSaucesTexte, 10) || 0,
         ...(imageUrl ? { image_url: imageUrl } : {}),
       };
 
@@ -245,6 +264,7 @@ export default function GestionMenu({
 
   return (
     <div className="flex flex-col gap-6 p-4">
+      {/* Catégories */}
       <section>
         <h2 className="mb-2 text-sm font-semibold uppercase text-foreground/50">
           Catégories
@@ -256,7 +276,7 @@ export default function GestionMenu({
                 type="text"
                 value={cat.nom}
                 onChange={(e) => renommerCategorie(cat, e.target.value)}
-                className="flex-1 rounded-lg border border-foreground/15 bg-transparent px-2 py-1 text-sm"
+                className="flex-1 rounded-lg border border-accent/25 bg-transparent px-2 py-1 text-sm"
               />
               <button
                 onClick={() => basculerCategorieActive(cat)}
@@ -272,15 +292,16 @@ export default function GestionMenu({
           ))}
           <button
             onClick={ajouterCategorie}
-            className="self-start text-xs font-medium text-accent underline underline-offset-2"
+            className="self-start rounded-full bg-jaune px-3 py-1.5 text-xs font-semibold text-ink"
           >
             + Nouvelle catégorie
           </button>
         </div>
       </section>
 
+      {/* Formulaire création/édition */}
       {formulaire && (
-        <section className="flex flex-col gap-3 rounded-xl border border-foreground/15 p-4">
+        <section className="flex flex-col gap-3 rounded-xl border border-accent/25 p-4">
           <h2 className="text-sm font-semibold">
             {formulaire.id ? "Modifier le plat" : "Nouveau plat"}
           </h2>
@@ -290,7 +311,7 @@ export default function GestionMenu({
             onChange={(e) =>
               setFormulaire({ ...formulaire, categorieId: e.target.value })
             }
-            className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           >
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -304,7 +325,7 @@ export default function GestionMenu({
             placeholder="Nom du plat"
             value={formulaire.nom}
             onChange={(e) => setFormulaire({ ...formulaire, nom: e.target.value })}
-            className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
 
           <textarea
@@ -314,7 +335,7 @@ export default function GestionMenu({
               setFormulaire({ ...formulaire, description: e.target.value })
             }
             rows={2}
-            className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
 
           <input
@@ -325,7 +346,7 @@ export default function GestionMenu({
             onChange={(e) =>
               setFormulaire({ ...formulaire, prixTexte: e.target.value })
             }
-            className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
 
           <input
@@ -335,8 +356,39 @@ export default function GestionMenu({
             onChange={(e) =>
               setFormulaire({ ...formulaire, allergenesTexte: e.target.value })
             }
-            className="rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
+
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-foreground/60">
+                Viandes à choisir (0 = pas de choix)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formulaire.nbViandesTexte}
+                onChange={(e) =>
+                  setFormulaire({ ...formulaire, nbViandesTexte: e.target.value })
+                }
+                className="w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-foreground/60">
+                Sauces au maximum (0 = pas de choix)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formulaire.nbSaucesTexte}
+                onChange={(e) =>
+                  setFormulaire({ ...formulaire, nbSaucesTexte: e.target.value })
+                }
+                className="w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
 
           <div>
             <label className="mb-1 block text-xs font-medium text-foreground/60">
@@ -356,13 +408,13 @@ export default function GestionMenu({
             <button
               onClick={enregistrerFormulaire}
               disabled={enregistrementEnCours}
-              className="flex-1 rounded-full bg-accent py-2 text-sm font-semibold text-background disabled:opacity-60"
+              className="flex-1 rounded-full bg-vert py-2 text-sm font-semibold text-white disabled:opacity-60"
             >
               {enregistrementEnCours ? "Enregistrement…" : "Enregistrer"}
             </button>
             <button
               onClick={() => setFormulaire(null)}
-              className="rounded-full border border-foreground/15 px-4 py-2 text-sm"
+              className="rounded-full border border-accent/25 px-4 py-2 text-sm"
             >
               Annuler
             </button>
@@ -370,6 +422,7 @@ export default function GestionMenu({
         </section>
       )}
 
+      {/* Liste des plats par catégorie */}
       {categoriesTriees.map((cat) => {
         const platsDeCetteCategorie = plats
           .filter((p) => p.categorie_id === cat.id)
@@ -385,7 +438,7 @@ export default function GestionMenu({
               {platsDeCetteCategorie.map((plat) => (
                 <div
                   key={plat.id}
-                  className="flex items-center gap-3 rounded-xl border border-foreground/10 p-3"
+                  className="flex items-center gap-3 rounded-xl border border-accent/20 p-3"
                 >
                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
                     {plat.image_url ? (
@@ -440,14 +493,14 @@ export default function GestionMenu({
 
                   <button
                     onClick={() => ouvrirModification(plat)}
-                    className="shrink-0 text-xs font-medium text-foreground/50 underline underline-offset-2"
+                    className="shrink-0 text-xs font-medium text-orange underline underline-offset-2"
                   >
                     Modifier
                   </button>
 
                   <button
                     onClick={() => supprimerPlat(plat)}
-                    className="shrink-0 text-xs font-medium text-red-600 underline underline-offset-2"
+                    className="shrink-0 text-xs font-medium text-red-500 underline underline-offset-2"
                   >
                     Supprimer
                   </button>
@@ -461,7 +514,7 @@ export default function GestionMenu({
       {!formulaire && (
         <button
           onClick={ouvrirCreation}
-          className="rounded-full bg-accent py-3 text-sm font-semibold text-background"
+          className="rounded-full bg-jaune py-3 text-sm font-semibold text-ink"
         >
           + Ajouter un plat
         </button>

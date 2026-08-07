@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Categorie, Plat } from "@/lib/types";
+import Image from "next/image";
+import type { Categorie, OptionTaco, Plat } from "@/lib/types";
 import DishCard from "./dish-card";
 
 export default function MenuView({
   categories,
   plats,
+  viandes,
+  sauces,
 }: {
   categories: Categorie[];
   plats: Plat[];
+  viandes: OptionTaco[];
+  sauces: OptionTaco[];
 }) {
   const [categorieActive, setCategorieActive] = useState(categories[0]?.id ?? "");
   const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
@@ -47,7 +52,15 @@ export default function MenuView({
   }
 
   return (
-    <div className="pb-8">
+    <div className="relative pb-8">
+      <Image
+        src="/motif-geometrique.png"
+        alt=""
+        width={700}
+        height={436}
+        className="pointer-events-none absolute left-1/2 top-32 -z-10 -translate-x-1/2 opacity-[0.06]"
+      />
+      
       <nav className="sticky top-0 z-10 flex gap-2 overflow-x-auto bg-background/95 px-4 py-3 backdrop-blur">
         {categories.map((cat) => (
           <button
@@ -80,10 +93,17 @@ export default function MenuView({
               }}
               className="scroll-mt-16"
             >
-              <h2 className="mb-3 text-lg font-semibold">{cat.nom}</h2>
+              <h2 className="mb-3 inline-block rounded-xl border border-accent/30 bg-panel px-4 py-1.5 text-lg font-semibold shadow-sm">
+                {cat.nom}
+              </h2>
               <div className="flex flex-col gap-3">
                 {platsDeCetteCategorie.map((plat) => (
-                  <DishCard key={plat.id} plat={plat} />
+                  <DishCard
+                    key={plat.id}
+                    plat={plat}
+                    viandes={viandes}
+                    sauces={sauces}
+                  />
                 ))}
               </div>
             </section>

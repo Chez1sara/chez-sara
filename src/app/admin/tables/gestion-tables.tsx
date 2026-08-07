@@ -45,7 +45,7 @@ export default function GestionTables({
       {tables.map((table) => (
         <div
           key={table.id}
-          className="flex items-center justify-between rounded-xl border border-foreground/10 p-3"
+          className="flex items-center justify-between rounded-xl border border-accent/20 bg-panel p-3"
         >
           <div>
             <p className="font-medium">{table.id}</p>
@@ -59,7 +59,7 @@ export default function GestionTables({
             className={`rounded-full px-4 py-1.5 text-sm font-medium ${
               table.actif
                 ? "bg-accent text-background"
-                : "bg-red-500/20 text-red-400"
+                : "bg-red-500/15 text-red-700"
             }`}
           >
             {table.actif ? "Active" : "Désactivée"}

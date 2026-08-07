@@ -18,13 +18,13 @@ export default function Error({
       <div className="flex gap-2">
         <button
           onClick={reset}
-          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-background"
+          className="rounded-full bg-jaune px-4 py-2 text-sm font-semibold text-ink"
         >
           Réessayer
         </button>
         <Link
           href="/"
-          className="rounded-full border border-foreground/15 px-4 py-2 text-sm font-medium"
+          className="rounded-full border border-accent/25 px-4 py-2 text-sm font-medium"
         >
           Accueil
         </Link>

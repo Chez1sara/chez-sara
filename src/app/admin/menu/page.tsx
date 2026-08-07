@@ -20,7 +20,7 @@ export default async function AdminMenuPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-between border-b border-foreground/10 p-4">
+      <div className="flex items-center justify-between border-b border-accent/20 p-4">
         <h1 className="text-xl font-semibold">Gestion du menu</h1>
         <Link
           href="/admin"

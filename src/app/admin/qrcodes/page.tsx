@@ -12,14 +12,14 @@ export default async function QrCodesPage() {
 
   const { data: tables } = await supabase
     .from("tables_resto")
-    .select("id")
+    .select("id, code_qr")
     .order("id", { ascending: true });
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="qrcodes-en-tete flex items-center justify-between border-b border-foreground/10 p-4">
+      <div className="qrcodes-en-tete flex items-center justify-between border-b border-accent/20 p-4">
         <h1 className="text-xl font-semibold">QR codes des tables</h1>
         <Link
           href="/admin"
@@ -29,7 +29,7 @@ export default async function QrCodesPage() {
         </Link>
       </div>
       <GrilleQrCodes
-        tableIds={(tables ?? []).map((t) => t.id as string)}
+        tablesInitiales={(tables ?? []) as { id: string; code_qr: string }[]}
         siteUrl={siteUrl}
       />
     </div>

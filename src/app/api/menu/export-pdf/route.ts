@@ -51,22 +51,22 @@ export async function GET() {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
   });
 
-  const OR = "#c99a4a";
-  const BORDEAUX = "#7a2e2e";
+  const OR = "#b1863f";
+  const TEAL = "#123739";
   const largeurPage = doc.page.width;
   const margeGauche = 50;
   const margeDroite = 50;
   const largeurContenu = largeurPage - margeGauche - margeDroite;
   const tailleImage = 45;
 
-  doc.rect(0, 0, largeurPage, 90).fill("#221019");
+  doc.rect(0, 0, largeurPage, 90).fill(TEAL);
   doc
     .fillColor(OR)
     .font("Helvetica")
     .fontSize(10)
     .text("NIORT · FRANCE", margeGauche, 32);
   doc
-    .fillColor("#f4ecdf")
+    .fillColor("#f3ead6")
     .font("Helvetica-Bold")
     .fontSize(26)
     .text("Chez Sara", margeGauche, 46);
@@ -82,7 +82,7 @@ export async function GET() {
     }
 
     doc
-      .fillColor(BORDEAUX)
+      .fillColor(TEAL)
       .font("Helvetica-Bold")
       .fontSize(15)
       .text(cat.nom, margeGauche, doc.y);
@@ -191,6 +191,17 @@ export async function GET() {
 
     doc.y += 6;
   }
+
+  doc
+    .fontSize(9)
+    .fillColor("#777")
+    .font("Helvetica")
+    .text(
+      "C.C Carrefour, 32 rue de Pierre, 79000 Niort — 06 83 61 38 46",
+      margeGauche,
+      doc.y + 10,
+      { width: largeurContenu, align: "center" }
+    );
 
   doc.end();
   const pdfBuffer = await pdfPret;

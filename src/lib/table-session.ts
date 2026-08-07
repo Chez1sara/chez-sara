@@ -9,6 +9,7 @@ export type TableInfo = {
   id: string;
   zone: string;
   capacite: number;
+  code_qr: string;
 };
 
 // Cache la dernière valeur lue : useSyncExternalStore exige que la

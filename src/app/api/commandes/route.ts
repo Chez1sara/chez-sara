@@ -11,9 +11,14 @@ export async function POST(request: Request) {
   const { tableId, mode, commentaireGeneral, tempsRetraitMinutes, lignes } =
     corps;
 
-  if (!tableId || !mode || !Array.isArray(lignes) || lignes.length === 0) {
+  const manquants: string[] = [];
+  if (!tableId) manquants.push("tableId");
+  if (!mode) manquants.push("mode");
+  if (!Array.isArray(lignes) || lignes.length === 0) manquants.push("lignes");
+
+  if (manquants.length > 0) {
     return NextResponse.json(
-      { erreur: "Commande invalide : données manquantes." },
+      { erreur: `Commande invalide : champ(s) manquant(s) — ${manquants.join(", ")}.` },
       { status: 400 }
     );
   }

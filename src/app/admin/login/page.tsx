@@ -38,7 +38,7 @@ export default function LoginPage() {
         onSubmit={seConnecter}
         className="flex w-full max-w-sm flex-col gap-4"
       >
-        <h1 className="text-center text-xl font-semibold">Espace caissier</h1>
+        <h1 className="font-display text-center text-xl text-foreground">Espace caissier</h1>
 
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
@@ -47,7 +47,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
         </div>
 
@@ -60,7 +60,7 @@ export default function LoginPage() {
             required
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
-            className="w-full rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
           />
         </div>
 
@@ -69,7 +69,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={enCours}
-          className="rounded-full bg-accent py-3 text-sm font-semibold text-background disabled:opacity-60"
+          className="rounded-full bg-jaune py-3 text-sm font-semibold text-ink disabled:opacity-60"
         >
           {enCours ? "Connexion…" : "Se connecter"}
         </button>

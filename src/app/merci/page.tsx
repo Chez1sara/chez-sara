@@ -24,13 +24,13 @@ export default function MerciPage() {
     <div className="flex flex-1 flex-col gap-6 px-4 py-10 text-center">
       <div>
         <p className="text-4xl">✅</p>
-        <h1 className="mt-2 text-2xl font-semibold">Commande envoyée !</h1>
+        <h1 className="font-display mt-2 text-2xl text-foreground">Commande envoyée !</h1>
         <p className="mt-1 text-sm text-foreground/60">
           Numéro de commande : <span className="font-mono font-semibold">{recap.numeroCourt}</span>
         </p>
       </div>
 
-      <div className="rounded-xl border border-foreground/10 p-4 text-left">
+      <div className="rounded-xl border border-accent/25 bg-panel p-4 text-left">
         <div className="flex flex-col gap-1">
           {recap.lignes.map((ligne, i) => (
             <div key={i} className="flex justify-between text-sm">
@@ -43,7 +43,7 @@ export default function MerciPage() {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex justify-between border-t border-foreground/10 pt-3 font-semibold">
+        <div className="mt-3 flex justify-between border-t border-accent/15 pt-3 font-semibold">
           <span>Total</span>
           <span>{formatPrix(recap.totalCentimes)}</span>
         </div>
@@ -55,19 +55,19 @@ export default function MerciPage() {
       </div>
 
       {LIEN_AVIS && (
-        <Link
+        <a
           href={LIEN_AVIS}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full rounded-full border border-foreground/15 py-3 text-sm font-medium"
+          className="block w-full rounded-full border border-accent/25 py-3 text-sm font-medium"
         >
           ⭐ Laissez-nous un avis
-        </Link>
+        </a>
       )}
 
       <Link
         href="/menu"
-        className="block w-full rounded-full bg-accent py-3 text-sm font-semibold text-background"
+        className="block w-full rounded-full bg-vert py-3 text-sm font-semibold text-white"
       >
         Commander autre chose
       </Link>

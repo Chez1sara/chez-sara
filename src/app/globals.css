@@ -1,21 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #221019;
-  --foreground: #f4ecdf;
-  --accent: #c99a4a;
+  --background: #a2a19e;
+  --panel: #f4f1e6;
+  --foreground: #17383a;
+  --accent: #6b4e1c;
+  --jaune: #c99320;
+  --orange: #c05a1e;
+  --vert: #2f7a3c;
+  --ink: #17383a;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-panel: var(--panel);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
+  --color-jaune: var(--jaune);
+  --color-orange: var(--orange);
+  --color-vert: var(--vert);
+  --color-ink: var(--ink);
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: url("/tuile-geometrique.png");
+  background-repeat: repeat;
+  background-size: 160px 160px;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

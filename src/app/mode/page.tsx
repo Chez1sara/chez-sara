@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { definirMode, type ModeCommande } from "@/lib/cart-session";
 import { useTableEnregistree } from "@/lib/table-session";
@@ -47,8 +48,16 @@ export default function ModePage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-12">
-      <h1 className="text-center text-2xl font-semibold">
+    <div className="relative flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden px-4 py-12">
+      <Image
+        src="/motif-theiere.png"
+        alt=""
+        width={500}
+        height={455}
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-auto w-[110%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-25"
+      />
+
+      <h1 className="font-display rounded-xl border border-accent/30 bg-panel px-5 py-2.5 text-center text-xl text-foreground shadow-sm">
         Comment souhaites-tu être servi ?
       </h1>
       <div className="flex w-full max-w-sm flex-col gap-3">
@@ -56,7 +65,7 @@ export default function ModePage() {
           <button
             key={option.valeur}
             onClick={() => choisir(option.valeur)}
-            className="flex items-center gap-3 rounded-xl border border-foreground/15 p-4 text-left transition-colors hover:bg-foreground/5"
+            className="flex items-center gap-3 rounded-xl border border-accent/25 bg-panel p-4 text-left transition-colors hover:border-accent/50"
           >
             <span className="text-2xl">{option.emoji}</span>
             <div>

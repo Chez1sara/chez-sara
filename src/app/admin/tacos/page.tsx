@@ -1,24 +1,24 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { creerClientServeur } from "@/lib/supabase-server";
-import GestionTables from "./gestion-tables";
+import GestionOptions from "./gestion-options";
 
-export default async function TablesPage() {
+export default async function TacosPage() {
   const supabase = await creerClientServeur();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
 
-  const { data: tables } = await supabase
-    .from("tables_resto")
-    .select("*")
-    .order("id", { ascending: true });
+  const [{ data: viandes }, { data: sauces }] = await Promise.all([
+    supabase.from("options_taco_viandes").select("*").order("ordre"),
+    supabase.from("options_taco_sauces").select("*").order("ordre"),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-between border-b border-accent/20 p-4">
-        <h1 className="text-xl font-semibold">Gérer les tables</h1>
+        <h1 className="text-xl font-semibold">Viandes & sauces (tacos)</h1>
         <Link
           href="/admin"
           className="text-sm font-medium text-foreground/50 underline underline-offset-2"
@@ -26,7 +26,7 @@ export default async function TablesPage() {
           ← Commandes
         </Link>
       </div>
-      <GestionTables tablesInitiales={tables ?? []} />
+      <GestionOptions viandes={viandes ?? []} sauces={sauces ?? []} />
     </div>
   );
 }

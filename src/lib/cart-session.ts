@@ -25,10 +25,6 @@ export type PanierData = {
 const PANIER_KEY = "chez-sara-panier";
 const PANIER_EVENT = "chez-sara-panier-changed";
 
-// Identifiant purement local (juste pour distinguer les lignes du
-// panier à l'écran) : contrairement à crypto.randomUUID(), fonctionne
-// même en HTTP simple (ex. test sur téléphone via l'adresse réseau
-// locale), pas seulement en HTTPS/localhost.
 function idAleatoire(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -79,20 +75,28 @@ export function definirMode(mode: ModeCommande) {
   ecrirePanier({ ...lirePanier(), mode });
 }
 
-export function ajouterAuPanier(plat: {
-  id: string;
-  nom: string;
-  prixCentimes: number;
-}) {
+export function ajouterAuPanier(
+  plat: {
+    id: string;
+    nom: string;
+    prixCentimes: number;
+  },
+  options?: { commentaire?: string; quantite?: number }
+) {
+  const commentaire = options?.commentaire ?? "";
+  const quantiteAjoutee = options?.quantite ?? 1;
+
   const actuel = lirePanier();
   const existante = actuel.lignes.find(
-    (l) => l.platId === plat.id && l.commentaire === ""
+    (l) => l.platId === plat.id && l.commentaire === commentaire
   );
 
   let lignes: LignePanier[];
   if (existante) {
     lignes = actuel.lignes.map((l) =>
-      l.id === existante.id ? { ...l, quantite: l.quantite + 1 } : l
+      l.id === existante.id
+        ? { ...l, quantite: l.quantite + quantiteAjoutee }
+        : l
     );
   } else {
     const nouvelle: LignePanier = {
@@ -100,8 +104,8 @@ export function ajouterAuPanier(plat: {
       platId: plat.id,
       nom: plat.nom,
       prixUnitaireCentimes: plat.prixCentimes,
-      quantite: 1,
-      commentaire: "",
+      quantite: quantiteAjoutee,
+      commentaire,
       modeLigne: actuel.mode === "mixte" ? "sur_place" : null,
     };
     lignes = [...actuel.lignes, nouvelle];

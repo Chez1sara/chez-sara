@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   enregistrerTable,
   useTableEnregistree,
@@ -41,12 +42,12 @@ export default function AccueilView({
 
   return (
     <div className="flex flex-1 flex-col gap-6 py-6">
-      <div className="px-4 text-center">
+      <div className="relative overflow-hidden px-4 pb-6 pt-4 text-center">
+        
         <p className="font-mono text-xs tracking-widest uppercase text-accent">
           Niort · France
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight">Chez Sara</h1>
-        <p className="mt-1 text-sm text-foreground/60">
+        <p className="mt-2 text-base text-foreground/75">
           Bienvenue ! Découvre notre carte et commande directement depuis ta
           table.
         </p>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   usePanier,
@@ -100,17 +101,33 @@ export default function PanierPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-4 py-6 pb-28">
-      <h1 className="text-xl font-semibold">Ton panier</h1>
+      <div className="relative -mx-4 -mt-6 overflow-hidden px-4 pb-2 pt-6">
+        <Image
+          src="/coin-arabesque.png"
+          alt=""
+          width={80}
+          height={73}
+          className="pointer-events-none absolute -left-2 -top-1 -z-10 opacity-70"
+        />
+        <Image
+          src="/coin-arabesque.png"
+          alt=""
+          width={80}
+          height={73}
+          className="pointer-events-none absolute -right-2 -top-1 -z-10 -scale-x-100 opacity-70"
+        />
+        <h1 className="font-display relative text-2xl text-foreground">Ton panier</h1>
+      </div>
 
       <div className="flex flex-col gap-3">
         {panier.lignes.map((ligne) => (
           <div
             key={ligne.id}
-            className="rounded-xl border border-foreground/10 p-3"
+            className="rounded-xl border border-accent/25 bg-panel p-3"
           >
             <div className="flex items-start justify-between gap-2">
               <p className="font-medium">{ligne.nom}</p>
-              <span className="whitespace-nowrap font-mono text-sm text-accent">
+              <span className="whitespace-nowrap font-display text-sm text-accent">
                 {formatPrix(ligne.prixUnitaireCentimes * ligne.quantite)}
               </span>
             </div>
@@ -118,7 +135,7 @@ export default function PanierPage() {
             <div className="mt-2 flex items-center gap-3">
               <button
                 onClick={() => modifierQuantite(ligne.id, -1)}
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/10 text-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-accent/30 text-sm"
                 aria-label="Retirer un"
               >
                 −
@@ -126,7 +143,7 @@ export default function PanierPage() {
               <span className="w-4 text-center text-sm">{ligne.quantite}</span>
               <button
                 onClick={() => modifierQuantite(ligne.id, 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/10 text-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-accent/30 text-sm"
                 aria-label="Ajouter un"
               >
                 +
@@ -148,8 +165,8 @@ export default function PanierPage() {
                     onClick={() => modifierModeLigne(ligne.id, m)}
                     className={`rounded-full px-3 py-1 text-xs font-medium ${
                       ligne.modeLigne === m
-                        ? "bg-accent text-background"
-                        : "bg-foreground/10 text-foreground/60"
+                        ? "bg-jaune text-ink"
+                        : "border border-accent/25 text-foreground/70"
                     }`}
                   >
                     {m === "sur_place" ? "Sur place" : "À emporter"}
@@ -163,7 +180,7 @@ export default function PanierPage() {
               value={ligne.commentaire}
               onChange={(e) => modifierCommentaireLigne(ligne.id, e.target.value)}
               placeholder="Un commentaire ? (ex. sans oignons)"
-              className="mt-3 w-full rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+              className="mt-3 w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
             />
           </div>
         ))}
@@ -181,8 +198,8 @@ export default function PanierPage() {
                 onClick={() => definirTempsRetrait(minutes)}
                 className={`flex-1 rounded-lg py-2 text-sm font-medium ${
                   panier.tempsRetraitMinutes === minutes
-                    ? "bg-accent text-background"
-                    : "bg-foreground/10 text-foreground/70"
+                    ? "bg-jaune text-ink"
+                    : "border border-accent/25 text-foreground/70"
                 }`}
               >
                 {minutes} min
@@ -203,7 +220,7 @@ export default function PanierPage() {
           value={panier.commentaireGeneral}
           onChange={(e) => modifierCommentaireGeneral(e.target.value)}
           rows={2}
-          className="w-full rounded-lg border border-foreground/15 bg-transparent px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-accent/25 bg-transparent px-3 py-2 text-sm"
         />
       </div>
 
@@ -213,7 +230,7 @@ export default function PanierPage() {
         </p>
       )}
 
-      <div className="fixed inset-x-0 bottom-0 z-20 bg-accent px-4 py-3 text-background">
+      <div className="fixed inset-x-0 bottom-0 z-20 bg-vert px-4 py-3 text-white">
         <button
           onClick={envoyerCommande}
           disabled={envoiEnCours}

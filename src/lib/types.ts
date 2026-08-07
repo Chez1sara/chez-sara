@@ -16,6 +16,15 @@ export type Plat = {
   allergenes: string[];
   ordre: number;
   actif: boolean;
+  nb_viandes_a_choisir: number;
+  nb_sauces_max: number;
+};
+
+export type OptionTaco = {
+  id: string;
+  nom: string;
+  ordre: number;
+  actif: boolean;
 };
 
 export function formatPrix(centimes: number): string {
