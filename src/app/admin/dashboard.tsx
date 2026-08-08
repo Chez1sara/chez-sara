@@ -111,7 +111,11 @@ function TicketImprimable({ commande }: { commande: Commande }) {
   return (
     <div className="ticket-impression hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      
+      <img
+        src={LOGO_TICKET_BASE64}
+        alt=""
+        style={{ width: "20mm", height: "20mm", margin: "0 auto 2mm" }}
+      />
       <p className="text-center font-bold">Chez Sara</p>
       <p className="text-center">C.C Carrefour, 32 rue de Pierre, 79000 Niort</p>
       <p className="text-center">06 83 61 38 46</p>
@@ -173,6 +177,9 @@ function CarteCommande({
 }) {
   const prochain = PROCHAIN_STATUT[commande.statut];
   const estNouvelle = commande.statut === "nouvelle";
+  const aDesCommentaires =
+    commande.commande_lignes.some((l) => l.commentaire) ||
+    !!commande.commentaire_general;
 
   return (
     <div
@@ -197,6 +204,11 @@ function CarteCommande({
               #{commande.numero_court} · {LABEL_MODE[commande.mode]} ·{" "}
               <MinuteurDepuis date={commande.cree_le} />
             </p>
+            {aDesCommentaires && !ouverte && (
+              <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-orange/20 px-2 py-0.5 text-xs font-medium text-orange">
+                💬 Commentaire client — voir détail
+              </p>
+            )}
           </div>
         </div>
         <div className="text-right">
@@ -240,8 +252,8 @@ function CarteCommande({
                   </span>
                 )}
                 {ligne.commentaire && (
-                  <span className="block text-xs text-foreground/40">
-                    {ligne.commentaire}
+                  <span className="mt-0.5 block rounded-md bg-orange/15 px-2 py-1 text-xs font-medium text-orange">
+                    💬 {ligne.commentaire}
                   </span>
                 )}
               </span>
@@ -251,8 +263,8 @@ function CarteCommande({
             </div>
           ))}
           {commande.commentaire_general && (
-            <p className="text-xs italic text-foreground/50">
-              « {commande.commentaire_general} »
+            <p className="rounded-md bg-orange/15 px-2 py-1 text-xs font-medium text-orange">
+              💬 Commande entière : « {commande.commentaire_general} »
             </p>
           )}
           {commande.mode === "mixte" && commande.temps_retrait_minutes && (
@@ -378,8 +390,6 @@ export default function Dashboard({
     if (!prochain) return;
 
     if (prochain.suivant === "terminee") {
-      // Une commande terminée sort du tableau actif : elle reste
-      // consultable dans l'Historique, mais n'a plus rien à faire ici.
       setCommandes((precedentes) =>
         precedentes.filter((c) => c.id !== commande.id)
       );
