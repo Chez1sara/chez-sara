@@ -55,14 +55,14 @@ export default function MerciPage() {
       </div>
 
       {LIEN_AVIS && (
-        <a
+        <Link
           href={LIEN_AVIS}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full rounded-full border border-accent/25 py-3 text-sm font-medium"
+          className="mx-auto inline-block rounded-full bg-jaune px-5 py-1.5 text-center text-xs font-medium text-ink"
         >
           ⭐ Laissez-nous un avis
-        </a>
+        </Link>
       )}
 
       <Link
